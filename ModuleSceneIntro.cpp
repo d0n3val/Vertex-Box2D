@@ -26,6 +26,8 @@ ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Modul
 	selected = NULL;
 	strcpy_s(name, "points");
 	strcpy_s(file_coords, "./unknows_coords.txt");
+	pivot.x = pivot.y = 0;
+	pivot_rotation = pivot_positions::top_left;
 }
 
 ModuleSceneIntro::~ModuleSceneIntro()
@@ -98,25 +100,34 @@ void ModuleSceneIntro::Load(const char* filename)
 		int i = 0;
 		int l = strlen(buf);
 
+		pivot.x = -1; 
+		pivot.y = -1;
+
+
+		sscanf_s(&buf[i], "// Pivot %d, %d", &pivot.x, &pivot.y);
+		
 		while(buf[i] != '\n' && i < l)
 			++i;
 
 		int readed = EOF;
 		p2Point<int> p;
-		float x, y;
+		++i;
+
 		do
-		{
-			readed = sscanf_s(&buf[i++], " %ff, %ff", &x, &y);
-			if(readed == EOF)
+		{	
+			while(buf[i] != '\n' && buf[i] != ';'&& i < l)
+				++i;
+
+			readed = sscanf_s(&buf[i++], " %d, %d", &p.x, &p.y);
+			if(readed == EOF || buf[i] == '}')
 				break;
 
-			p.x = (int)x;
-			p.y = (int)y;
 			points.add(p);
 
-			while(buf[i] != '\n' && i < l)
-				++i;
 		} while(1);
+
+		App->renderer->camera.x -= pivot.x;
+		App->renderer->camera.y -= pivot.y;
 	}
 }
 
@@ -125,14 +136,12 @@ bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 
-	if(graphics != NULL)
-		App->textures->Unload(graphics);
-
 	if(points.count() > 0)
 	{
 		char buf[DATA_BUFFER];
-		sprintf_s(buf, "float %s[%d] = {\n", name, points.count() * 2);
 
+		// Print absolute coordinates ---
+		sprintf_s(buf, "// Pivot %d, %d\nint %s[%d] = {\n", pivot.x, pivot.y, name, points.count() * 2);
 		char line[255] = "";
 
 		p2List_item<p2Point<int>>* item = points.getFirst();
@@ -140,7 +149,7 @@ bool ModuleSceneIntro::CleanUp()
 		while(item != NULL)
 		{
 			App->renderer->DrawQuad({item->data.x, item->data.y, 5, 5}, 255, 255, 255, 255, false);
-			sprintf_s(line, 255, "\t%d.0f, %d.0f,\n", item->data.x, item->data.y);
+			sprintf_s(line, 255, "\t%d, %d,\n", item->data.x, item->data.y);
 			strcat_s(buf, line);
 
 			item = item->next;
@@ -149,6 +158,34 @@ bool ModuleSceneIntro::CleanUp()
 		buf[strlen(buf) - 2] = 0;
 		strcat_s(buf, "\n};\n");
 
+		// Print relative coordinates ---
+		if(graphics != NULL)
+		{
+			int width, height;
+
+			SDL_QueryTexture(graphics, NULL, NULL, &width, &height);
+
+			sprintf_s(line, "\n// Pivot %f, %f\nfloat %s[%d] = {\n", (float)pivot.x / width, (float)pivot.y / height, name, points.count() * 2);
+			strcat_s(buf, line);
+			char line[255] = "";
+
+			p2List_item<p2Point<int>>* item = points.getFirst();
+
+			while(item != NULL)
+			{
+				App->renderer->DrawQuad({item->data.x, item->data.y, 5, 5}, 255, 255, 255, 255, false);
+				sprintf_s(line, 255, "\t%ff, %ff,\n", (float)item->data.x / width, (float)item->data.y / height);
+				strcat_s(buf, line);
+
+				item = item->next;
+			}
+
+			buf[strlen(buf) - 2] = 0;
+			strcat_s(buf, "\n};\n");
+
+		}
+
+		// Write to file ---
 		FILE* f;
 		if(fopen_s(&f, file_coords, "w") == 0)
 		{
@@ -161,6 +198,9 @@ bool ModuleSceneIntro::CleanUp()
 
 		points.clear();
 
+		if(graphics != NULL)
+			App->textures->Unload(graphics);
+
 		selected = NULL;
 	}
 
@@ -171,7 +211,7 @@ bool ModuleSceneIntro::CleanUp()
 update_status ModuleSceneIntro::Update()
 {
 	if(graphics != NULL)
-		App->renderer->Blit(graphics, 0, 0);
+		App->renderer->Blit(graphics, pivot.x, pivot.y);
 
 	char str[256];
 	p2Point<int> mouse;
@@ -179,9 +219,9 @@ update_status ModuleSceneIntro::Update()
 	mouse.y = App->input->GetMouseY() / App->renderer->zoom - App->renderer->camera.y / App->renderer->zoom;
 
 	if(graphics != NULL)
-		sprintf_s(str, "Vertex-Box2D [%s.png] %d, %d", name, mouse.x, mouse.y);
+		sprintf_s(str, "Vertex-Box2D [%s.png] (%d vertices) %d, %d", name, points.count(), mouse.x, mouse.y);
 	else
-		sprintf_s(str, "Vertex-Box2D [UNKNOWN] %d, %d", mouse.x, mouse.y);
+		sprintf_s(str, "Vertex-Box2D [UNKNOWN] (%d vertices) %d, %d", points.count(), mouse.x, mouse.y);
 
 	App->window->SetTitle(str);
 	
@@ -189,13 +229,13 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetKey(SDL_SCANCODE_KP_PLUS) == KEY_DOWN)
 	{
-		App->renderer->zoom += 0.25f;
+		App->renderer->zoom += 0.25f / App->renderer->zoom;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
 	{
 		if(App->renderer->zoom >= 0.5f)
-			App->renderer->zoom -= 0.25f;
+			App->renderer->zoom -= 0.25f / App->renderer->zoom;
 	}
 
 	if(selected != NULL && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_IDLE))
@@ -203,8 +243,8 @@ update_status ModuleSceneIntro::Update()
 		selected = NULL;
 	}
 
-	App->renderer->DrawLine(-App->renderer->camera.x / App->renderer->zoom, 0, App->renderer->camera.w / App->renderer->zoom - App->renderer->camera.x / App->renderer->zoom, 0, 100, 100, 100, 100, true);
-	App->renderer->DrawLine(0, -App->renderer->camera.y / App->renderer->zoom, 0, App->renderer->camera.h / App->renderer->zoom - App->renderer->camera.y / App->renderer->zoom, 100, 100, 100, 100, true);
+	App->renderer->DrawLine(-App->renderer->camera.x / App->renderer->zoom, 0, App->renderer->camera.w / App->renderer->zoom - App->renderer->camera.x / App->renderer->zoom, 0, 200, 200, 200, 150, true);
+	App->renderer->DrawLine(0, -App->renderer->camera.y / App->renderer->zoom, 0, App->renderer->camera.h / App->renderer->zoom - App->renderer->camera.y / App->renderer->zoom, 200, 200, 200, 150, true);
 
 	p2List_item<p2Point<int>>* item = points.getFirst();
 	p2Point<int> prev;
@@ -247,7 +287,11 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 	{
-		if(selected != NULL)
+		if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_REPEAT)
+		{
+			ChangePivot(mouse);
+		}
+		else if(selected != NULL)
 		{
 			selected->data = mouse;
 		}
@@ -255,7 +299,11 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 	{
-		if(selected == NULL)
+		if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_REPEAT)
+		{
+			ChangePivot(mouse);
+		}
+		else if(selected == NULL)
 		{
 			selected = points.add(mouse);
 		}
@@ -272,10 +320,76 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->camera.y += mouse.y - panning_center.y;
 	}
 
+	if(App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+	{
+		if(graphics != NULL)
+		{
+			int width, height;
+			p2Point<int> new_pivot = pivot;
+			SDL_QueryTexture(graphics, NULL, NULL, &width, &height);
+
+			// rotate pivot to predefined positions
+			++pivot_rotation;
+			if(pivot_rotation == pivot_positions::max)
+				pivot_rotation = pivot_positions::top_left;
+
+			switch(pivot_rotation)
+			{
+				case pivot_positions::top_mid:
+				new_pivot.x += width / 2;
+				break;
+				case pivot_positions::top_right:
+				new_pivot.x += width;
+				break;
+				case pivot_positions::right:
+				new_pivot.x += width;
+				new_pivot.y += height / 2;
+				break;
+				case pivot_positions::center:
+				new_pivot.x += width / 2;
+				new_pivot.y += height / 2;
+				break;
+				case pivot_positions::left:
+				new_pivot.y += height / 2;
+				break;
+				case pivot_positions::bottom_right:
+				new_pivot.y += height;
+				new_pivot.x += width;
+				break;
+				case pivot_positions::bottom_mid:
+				new_pivot.y += height;
+				new_pivot.x += width / 2;
+				break;
+				case pivot_positions::bottom_left:
+				new_pivot.y += height;
+				break;
+			}
+
+			ChangePivot(new_pivot);
+		}
+	}
+
 	if(App->input->FileWasDropped() == true)
 	{
 		Load(App->input->GetDroppedFile());
 	}
 
 	return UPDATE_CONTINUE;
+}
+
+void ModuleSceneIntro::ChangePivot(const p2Point<int>& new_pivot)
+{
+	pivot -= new_pivot;
+
+	// move center of coordinates to mouse
+	p2List_item<p2Point<int>>* item = points.getFirst();
+
+	while(item != NULL)
+	{
+		item->data -= new_pivot;
+		item = item->next;
+	}
+
+	App->renderer->camera.x += new_pivot.x;
+	App->renderer->camera.y += new_pivot.y;
 }
