@@ -1,0 +1,25 @@
+# Vertex Box2D #
+
+A simple utility to draw collision polygons for Box2D. 
+
+## Usage ##
+
+Drop any PNG file in the window to have the image loaded and ready for editing:
+
+- To add new points use left mouse button
+- Right button is used to pan around
+- Center wheel allows you to zoom in / out
+- Press BACKSPACE to delete the last vertex entered
+- While selecting a point press DEL to remove it
+
+To save your work close the application or load another image. A new file will be created in teh same folder of the original image with <image_name>_coords.txt that will contain the coordinates.
+
+The coordinates will also be copied to the clipboard so you can paste them in your code directly.
+
+The program will look for this file when opening a file and load the points so you can continue your previous work.
+
+## Contact ##
+
+Quickly hacked by Ric <ricardo.pillosu@gmail.com>
+
+Salut!
