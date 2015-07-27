@@ -5,7 +5,7 @@
 #include "Globals.h"
 
 #define BOUNCER_TIME 200
-#define DATA_BUFFER 1024
+#define DATA_BUFFER 8192
 
 enum pivot_positions
 {
