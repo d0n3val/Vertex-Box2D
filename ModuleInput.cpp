@@ -95,14 +95,25 @@ update_status ModuleInput::PreUpdate()
 			case SDL_MOUSEWHEEL:
 				mouse_z = e.wheel.y;
 			break;
+			
 			case SDL_DROPFILE: 
 				strcpy_s(dropped_file, e.drop.file);
 				SDL_free(e.drop.file);
 				file_was_dropped = true;
 				break;
+
 			case SDL_QUIT:
 				quit = true;
 			break;
+
+			case SDL_WINDOWEVENT:
+			{
+				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
+				{
+					App->renderer->camera.w = e.window.data1;
+					App->renderer->camera.h = e.window.data2;
+				}
+			}
 		}
 	}
 
