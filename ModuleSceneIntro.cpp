@@ -229,18 +229,12 @@ update_status ModuleSceneIntro::Update()
 
 	App->window->SetTitle(str);
 	
-	App->renderer->zoom += App->input->GetMouseZ() * 0.1f;
+	if(App->input->GetMouseZ() < 0 && App->renderer->zoom > 0.25f)
+		App->renderer->zoom += App->input->GetMouseZ() * 0.05f;
 
-	if(App->input->GetKey(SDL_SCANCODE_KP_PLUS) == KEY_DOWN)
-	{
-		App->renderer->zoom += 0.25f / App->renderer->zoom;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_KP_MINUS) == KEY_DOWN)
-	{
-		if(App->renderer->zoom >= 0.5f)
-			App->renderer->zoom -= 0.25f / App->renderer->zoom;
-	}
+	if(App->input->GetMouseZ() > 0 && App->renderer->zoom < 4.0f)
+		App->renderer->zoom += App->input->GetMouseZ() * 0.05f;
+		
 
 	if(selected != NULL && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_UP || App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_IDLE))
 	{
@@ -327,8 +321,8 @@ update_status ModuleSceneIntro::Update()
 
 	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
 	{
-		App->renderer->camera.x += mouse.x - panning_center.x;
-		App->renderer->camera.y += mouse.y - panning_center.y;
+		App->renderer->camera.x += (mouse.x - panning_center.x) * App->renderer->zoom;
+		App->renderer->camera.y += (mouse.y - panning_center.y) * App->renderer->zoom;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
