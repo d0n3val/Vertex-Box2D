@@ -1,6 +1,6 @@
 # Vertex Box2D v1.2-beta.1 #
 
-A simple utility to draw collision polygons for Box2D. It produces a crude list of the coordinates ready to be used in your C/C++ code:
+A simple utility for win32 to draw collision polygons for Box2D. It produces a crude list of the coordinates ready to be used in your C/C++ code:
 
 // Pivot 0, 0
 int elephant[8] = {
