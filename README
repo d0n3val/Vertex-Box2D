@@ -1,6 +1,6 @@
 # Vertex Box2D #
 
-A simple utility to draw collision polygons for Box2D. If you don't care for the code, you can file a win32 executable in the Editor folder.
+A simple utility to draw collision polygons for Box2D.
 
 ## Usage ##
 
