@@ -19,7 +19,7 @@
   <body>
     <header>
       <div class="inner">
-        <h1>Vertex-box2d</h1>
+        <h1>Vertex Box2d</h1>
         <h2>Editor for Box2D collision polygons</h2>
         <a href="https://github.com/d0n3val/Vertex-Box2D" class="button"><small>View project on</small> GitHub</a>
       </div>
@@ -31,13 +31,23 @@
           <h1>
 <a id="vertex-box2d" class="anchor" href="#vertex-box2d" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vertex Box2D</h1>
 
-<p>A simple utility to draw collision polygons for Box2D. It produces a crude list of the coordinates ready to be used in your C/C++ code:</p>
+<p>A simple win32 utility to draw collision polygons for Box2D. It produces a crude list of the coordinates ready to be used in your C/C++ code:</p>
 
-<code>float points[8] = {
-  68.0f, 77.0f,
-  165.0f, 37.0f,
-  223.0f, 108.0f,
-  106.0f, 144.0f
+<code>
+// Pivot 0, 0
+int elephant[8] = {
+  167, 307,
+  313, 183,
+  455, 368,
+  256, 364
+};
+
+// Pivot 0.000000, 0.000000
+float elephant[8] = {
+  0.185556f, 0.469419f,
+  0.347778f, 0.279817f,
+  0.505556f, 0.562691f,
+  0.284444f, 0.556575f
 };
 </code>
 
@@ -50,11 +60,13 @@
 <li>To add new points use left mouse button</li>
 <li>Right button is used to pan around</li>
 <li>Center wheel allows you to zoom in / out</li>
-<li>Press _BACKSPACE _to delete the last vertex entered</li>
-<li>While selecting a point press *<em>DEL *</em>to remove it</li>
+<li>Press <em>BACKSPACE</em> to delete the last vertex entered</li>
+<li>While selecting a point press <em>DEL</em>to remove it</li>
+<li>Press <em>SHIFT</em> and the right mouse button to move pivot point</li>
+<li>Press <em>P</em> to rotate the pivot point to the most common positions</li>
 </ul>
 
-<p>To save your work close the application or load another image. A new file will be created in teh same folder of the original image with <em>_coords.txt</em> that will contain the coordinates.</p>
+<p>To save your work close the application or load another image. A new file will be created in the same folder of the original image with <em>IMAGE_NAME_coords.txt</em> that will contain the coordinates.</p>
 
 <p>The coordinates will also be copied to the clipboard so you can paste them in your code directly.</p>
 
@@ -73,7 +85,7 @@ Ric</p>
         </section>
 
         <aside id="sidebar">
-          <a href="https://github.com/d0n3val/Vertex-Box2D/releases/download/v1.0-beta.1/Vertex-Box2D.zip" class="button">
+          <a href="https://github.com/d0n3val/Vertex-Box2D/releases/download/v1.2/Vertex-Box2D-v1.2.zip" class="button">
             <small>Download</small>
             .zip file
           </a>
