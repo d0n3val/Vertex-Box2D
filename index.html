@@ -13,7 +13,7 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <title>Vertex-box2d by d0n3val</title>
+    <title>Vertex-Box2d by d0n3val</title>
   </head>
 
   <body>
@@ -29,27 +29,35 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h1>
-<a id="vertex-box2d" class="anchor" href="#vertex-box2d" aria-hidden="true"><span class="octicon octicon-link"></span></a>Vertex Box2D</h1>
+<a id="vertex-box2d" class="anchor" href="#vertex-box2d" aria-hidden="true"><span class="octicon octicon-link"></span></a>What is Vertex Box2D ?</h1>
 
-<p>A simple win32 utility to draw collision polygons for Box2D. It produces a crude list of the coordinates ready to be used in your C/C++ code:</p>
+<p>A simple win32 utility to draw collision polygons for Box2D. </p>
+<p><img src="images/screenshot.png"></p>
+<p>It produces a crude list of the coordinates (both in absolute and relative) ready to be used in your C/C++ code:</p>
 
+<p>
 <code>
-// Pivot 0, 0
-int elephant[8] = {
-  167, 307,
-  313, 183,
-  455, 368,
-  256, 364
-};
-
-// Pivot 0.000000, 0.000000
-float elephant[8] = {
-  0.185556f, 0.469419f,
-  0.347778f, 0.279817f,
-  0.505556f, 0.562691f,
-  0.284444f, 0.556575f
-};
+// Pivot 0, 0 <br>
+int elephant[8] = {<br>
+  167, 307,<br>
+  313, 183,<br>
+  455, 368,<br>
+  256, 364<br>
+};<br>
 </code>
+</p>
+
+<p>
+<code>
+// Pivot 0.000000, 0.000000<br>
+float elephant[8] = {<br>
+  0.185556f, 0.469419f,<br>
+  0.347778f, 0.279817f,<br>
+  0.505556f, 0.562691f,<br>
+  0.284444f, 0.556575f<br>
+};<br>
+</code>
+</p>
 
 <h2>
 <a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
@@ -58,10 +66,11 @@ float elephant[8] = {
 
 <ul>
 <li>To add new points use left mouse button</li>
+<li>To duplicate points press <em>ALT</em> while selecting one vertex</li>
 <li>Right button is used to pan around</li>
 <li>Center wheel allows you to zoom in / out</li>
 <li>Press <em>BACKSPACE</em> to delete the last vertex entered</li>
-<li>While selecting a point press <em>DEL</em>to remove it</li>
+<li>While selecting a point press <em>DEL</em> to remove it</li>
 <li>Press <em>SHIFT</em> and the right mouse button to move pivot point</li>
 <li>Press <em>P</em> to rotate the pivot point to the most common positions</li>
 </ul>
@@ -72,7 +81,7 @@ float elephant[8] = {
 
 <p>The program will look for a coordinates file when opening an image file and load the points so you can continue your previous work.</p>
 
-<p><img src="images/screenshot.png"></p>
+
 
 <h2>
 <a id="contact" class="anchor" href="#contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contact</h2>
@@ -85,9 +94,9 @@ Ric</p>
         </section>
 
         <aside id="sidebar">
-          <a href="https://github.com/d0n3val/Vertex-Box2D/releases/download/v1.2/Vertex-Box2D-v1.2.zip" class="button">
+          <a href="https://github.com/d0n3val/Vertex-Box2D/releases/download/v1.3/Vertex-Box2D-v1.3.zip" class="button">
             <small>Download</small>
-            .zip file
+            win32 executable .zip file
           </a>
 
           <p class="repo-owner"><a href="https://github.com/d0n3val/Vertex-Box2D"></a> is maintained by <a href="https://github.com/d0n3val">d0n3val</a>.</p>
