@@ -19,6 +19,7 @@ public:
 	bool CleanUp();
 
 	void SetTitle(const char* title);
+	void ShowMessageBox(const char* title, const char* text);
 
 public:
 	//The window we'll be rendering to

@@ -36,6 +36,7 @@ public:
 public:
 
 	SDL_Texture* graphics;
+	SDL_Texture* drag_to_begin;
 	p2Point<int > pivot;
 	p2List<p2Point<int>> points;
 	char file[512];

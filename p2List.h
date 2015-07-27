@@ -214,5 +214,25 @@ public:
 
 		return (NULL);
 	}
+
+	/**
+	* Inserts a new element after specific item
+	*/
+	p2List_item<tdata>* InsertAfter(p2List_item<tdata>* item, const tdata& data)
+	{
+		p2List_item<tdata>* p_new_item = new p2List_item<tdata>(data);
+
+		p_new_item->next = item->next;
+
+		if(p_new_item->next != NULL)
+			p_new_item->next->prev = p_new_item;
+		else
+			end = p_new_item;
+
+		p_new_item->prev = item;
+		item->next = p_new_item;
+
+		return p_new_item;
+	}
 };
 #endif /*__p2List_H__*/

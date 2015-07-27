@@ -22,7 +22,7 @@ void toClipboard(const char* str, uint size)
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	graphics = NULL;
+	graphics = drag_to_begin = NULL;
 	selected = NULL;
 	strcpy_s(name, "points");
 	strcpy_s(file_coords, "./unknows_coords.txt");
@@ -41,6 +41,8 @@ bool ModuleSceneIntro::Start()
 
 	App->renderer->camera.x = 50;
 	App->renderer->camera.y = 50;
+
+	drag_to_begin = App->textures->Load("drag.png");
 
 	if(App->GetArgument(1) != NULL)
 		Load(App->GetArgument(1));
@@ -212,6 +214,8 @@ update_status ModuleSceneIntro::Update()
 {
 	if(graphics != NULL)
 		App->renderer->Blit(graphics, pivot.x, pivot.y);
+	else if(drag_to_begin != NULL)
+		App->renderer->Blit(drag_to_begin, pivot.x, pivot.y);
 
 	char str[256];
 	p2Point<int> mouse;
@@ -302,6 +306,13 @@ update_status ModuleSceneIntro::Update()
 		if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RSHIFT) == KEY_REPEAT)
 		{
 			ChangePivot(mouse);
+		}
+		else if(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT || App->input->GetKey(SDL_SCANCODE_RALT) == KEY_REPEAT)
+		{
+			if(selected != NULL)
+			{
+				selected = points.InsertAfter(selected, mouse);
+			}
 		}
 		else if(selected == NULL)
 		{

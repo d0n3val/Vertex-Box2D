@@ -23,6 +23,7 @@ float elephant[8] = {
 Drop any PNG file in the window to have the image loaded and ready for editing:
 
 - To add new points use left mouse button
+- To duplicate points press ALT while selecting one vertex
 - Right button is used to pan around
 - Center wheel allows you to zoom in / out
 - Press BACKSPACE to delete the last vertex entered
