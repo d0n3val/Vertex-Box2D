@@ -230,3 +230,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 Editor/unknows_coords.txt
+/.vs/Vertex-Box2D/v15
+/Editor/drag_coords.txt

@@ -54,26 +54,31 @@ bool ModuleTextures::CleanUp()
 SDL_Texture* const ModuleTextures::Load(const char* path)
 {
 	SDL_Texture* texture = NULL;
-	SDL_Surface* surface = IMG_Load(path);
-
-	if(surface == NULL)
+	SDL_RWops *io = SDL_RWFromFile(path, "rb");
+	if (io != NULL) 
 	{
-		LOG("Could not load surface with path: %s. IMG_Load: %s", path, IMG_GetError());
-	}
-	else
-	{
-		texture = SDL_CreateTextureFromSurface(App->renderer->renderer, surface);
+		SDL_Surface* surface = NULL;
 
-		if(texture == NULL)
+		if(!IMG_isPNG(io) || (surface = IMG_Load_RW(io, 0)))
 		{
-			LOG("Unable to create texture from surface! SDL Error: %s\n", SDL_GetError());
+			LOG("Could not load surface with path: %s. IMG_Load: %s", path, IMG_GetError());
 		}
 		else
 		{
-			textures.add(texture);
-		}
+			texture = SDL_CreateTextureFromSurface(App->renderer->renderer, surface);
 
-		SDL_FreeSurface(surface);
+			if (texture == NULL)
+			{
+				LOG("Unable to create texture from surface! SDL Error: %s\n", SDL_GetError());
+			}
+			else
+			{
+				textures.add(texture);
+			}
+
+			SDL_FreeSurface(surface);
+		}
+		io->close(io);
 	}
 
 	return texture;
